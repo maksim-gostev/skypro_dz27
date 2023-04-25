@@ -1,3 +1,5 @@
+import json
+
 from django.shortcuts import render
 from django.http import JsonResponse
 from django.utils.decorators import method_decorator
@@ -26,6 +28,19 @@ class CategoriesView(View):
 
         return JsonResponse(response, safe=False)
 
+    def post(self, request):
+        categorie_data = json.loads(request.body)
+
+        categorie = Categories()
+        categorie.name = categorie_data["name"]
+
+        categorie.save()
+
+        return JsonResponse({
+            "id": categorie.id,
+            "name": categorie.name
+        })
+
 
 
 @method_decorator(csrf_exempt, name='dispatch')
@@ -46,6 +61,29 @@ class AdsView(View):
                 "is_published": ads_.is_published
             })
         return JsonResponse(response, safe=False)
+
+    def post(self, request):
+        ads_data = json.loads(request.body)
+
+        ads = Ads()
+        ads.name =ads_data["name"]
+        ads.author =ads_data["author"]
+        ads.price =ads_data["price"]
+        ads.description =ads_data["description"]
+        ads.address =ads_data["address"]
+        ads.is_published =ads_data["is_published"]
+
+        ads.save()
+
+        return JsonResponse({
+            "id": ads.id,
+            "name": ads.name,
+            "author": ads.author,
+            "price": ads.price,
+            "description": ads.description,
+            "address": ads.address,
+            "is_published": ads.is_published
+        })
 
 
 class CategoriesDetailView(DetailView):
